@@ -1,4 +1,4 @@
-package co.feip.fefu2025
+package com.example.lab1
 
 import org.junit.Test
 
