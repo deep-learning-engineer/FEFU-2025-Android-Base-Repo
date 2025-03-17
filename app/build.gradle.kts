@@ -5,12 +5,12 @@ plugins {
 }
 
 android {
-    namespace = "co.feip.fefu2025"
+    namespace = "com.example.lab1"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "co.feip.fefu2025"
-        minSdk = 24
+        applicationId = "com.example.lab1"
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -36,7 +36,6 @@ android {
     }
     buildFeatures {
         compose = true
-        viewBinding = true
     }
 }
 
@@ -50,6 +49,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
