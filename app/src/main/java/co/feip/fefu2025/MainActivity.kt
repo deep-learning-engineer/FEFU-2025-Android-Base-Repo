@@ -1,47 +1,44 @@
 package co.feip.fefu2025
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import co.feip.fefu2025.ui.theme.FEFU2025AndroidBaseRepoTheme
+import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import android.widget.Button
+import kotlin.random.Random
 
-class MainActivity : ComponentActivity() {
+
+class MainActivity : AppCompatActivity() {
+    val amimeGenres = listOf(
+        "Приключения",
+        "Романтика",
+        "Реалистичный",
+        "Экспериментальный",
+        "Социальная драма"
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            FEFU2025AndroidBaseRepoTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "FEIP",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+        setContentView(R.layout.activity_main)
+
+        val addCategory = findViewById<Button>(R.id.addCategory)
+        addCategory.setOnClickListener{
+            addNewCategory()
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    fun addNewCategory() {
+        val customFlexBox = findViewById<ViewGroup>(R.id.customFlexBox)
+        val newCategory = CategoryView(this)
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    FEFU2025AndroidBaseRepoTheme {
-        Greeting("Android")
+        val color = android.graphics.Color.argb(
+            255,
+            Random.nextInt(256),
+            Random.nextInt(256),
+            Random.nextInt(256)
+        )
+        newCategory.setBackGroundColor(color)
+        newCategory.setCategoryName(amimeGenres.random())
+
+        customFlexBox.addView(newCategory)
     }
 }
