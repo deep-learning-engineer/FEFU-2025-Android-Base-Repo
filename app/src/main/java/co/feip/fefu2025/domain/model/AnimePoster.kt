@@ -1,6 +1,6 @@
-package co.feip.fefu2025
+package co.feip.fefu2025.domain.model
 
-data class AnimeData(
+data class AnimePoster(
     val title: String,
     val description: String?,
     val drawableName: String?

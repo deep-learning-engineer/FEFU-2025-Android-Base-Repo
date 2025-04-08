@@ -1,4 +1,4 @@
-package co.feip.fefu2025
+package co.feip.fefu2025.presentation.anime_details
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,13 +17,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import co.feip.fefu2025.domain.model.AnimePoster
+import co.feip.fefu2025.presentation.anime_details.components.RatingChart
+import co.feip.fefu2025.presentation.anime_list.components.SimpleAnimeCard
 
 
 @Composable
 fun AnimeDetailScreen(
-    anime: AnimeData,           // Данные основного аниме
+    anime: AnimePoster,           // Данные основного аниме
     ratings: Map<Int, Int>,     // Данные для графика рейтинга
-    recommendations: List<AnimeData> // Список рекомендованных аниме
+    recommendations: List<AnimePoster> // Список рекомендованных аниме
 ) {
     val scrollState = rememberScrollState()
     val context = LocalContext.current
@@ -117,7 +120,7 @@ fun AnimeDetailScreen(
 @Preview(showBackground = true, heightDp = 1100)
 @Composable
 fun AnimeDetailScreenPreview() {
-    val sampleAnimeData = AnimeData(
+    val sampleAnimePoster = AnimePoster(
         title = "Блич",
         description = "Центральный персонаж «Блич» — пятнадцатилетний школьник Ичиго Куросаки, случайно получивший сверхъестественные силы синигами — богов смерти. Синигами в Японии представляют собой персонифицированную смерть, наподобие западного скелета с косой. Наделённый их способностями, Ичиго вынужден сражаться со злыми духами, защищать людей и отправлять души умерших в загробный мир.",
         drawableName = "bleach"
@@ -129,16 +132,16 @@ fun AnimeDetailScreenPreview() {
     )
 
     val sampleRecommendationsData = listOf(
-        AnimeData("Блич", "Приключения Ичиго Куросаки, ставшего шинигами.", "bleach"),
-        AnimeData("Наруто", "История ниндзя Наруто Узумаки.", "naruto"),
-        AnimeData("One Piece", "Поиски величайшего сокровища пиратом Луффи.", "onepiece"),
-        AnimeData("Атака Титанов", "Человечество сражается с гигантами-людоедами.", "attack_on_titan"),
-        AnimeData("Блич", "Приключения Ичиго Куросаки, ставшего шинигами.", "bleach"),
-        AnimeData("Наруто", "История ниндзя Наруто Узумаки.", "naruto"),
-        AnimeData("One Piece", "Поиски величайшего сокровища пиратом Луффи.", "onepiece"),
-        AnimeData("Атака Титанов", "Человечество сражается с гигантами-людоедами.", "attack_on_titan"),
-        AnimeData("Блич", "Приключения Ичиго Куросаки, ставшего шинигами.", "bleach"),
-        AnimeData("Наруто", "История ниндзя Наруто Узумаки.", "naruto"),
+        AnimePoster("Блич", "Приключения Ичиго Куросаки, ставшего шинигами.", "bleach"),
+        AnimePoster("Наруто", "История ниндзя Наруто Узумаки.", "naruto"),
+        AnimePoster("One Piece", "Поиски величайшего сокровища пиратом Луффи.", "onepiece"),
+        AnimePoster("Атака Титанов", "Человечество сражается с гигантами-людоедами.", "attack_on_titan"),
+        AnimePoster("Блич", "Приключения Ичиго Куросаки, ставшего шинигами.", "bleach"),
+        AnimePoster("Наруто", "История ниндзя Наруто Узумаки.", "naruto"),
+        AnimePoster("One Piece", "Поиски величайшего сокровища пиратом Луффи.", "onepiece"),
+        AnimePoster("Атака Титанов", "Человечество сражается с гигантами-людоедами.", "attack_on_titan"),
+        AnimePoster("Блич", "Приключения Ичиго Куросаки, ставшего шинигами.", "bleach"),
+        AnimePoster("Наруто", "История ниндзя Наруто Узумаки.", "naruto"),
     )
 
     MaterialTheme {
@@ -147,7 +150,7 @@ fun AnimeDetailScreenPreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             AnimeDetailScreen(
-                anime = sampleAnimeData,
+                anime = sampleAnimePoster,
                 ratings = sampleRatingsData,
                 recommendations = sampleRecommendationsData
             )
@@ -159,13 +162,13 @@ fun AnimeDetailScreenPreview() {
 @Preview(showBackground = true, name = "Details No Desc/Image")
 @Composable
 fun AnimeDetailScreenNoDataPreview() {
-    val sampleAnimeData = AnimeData(
+    val sampleAnimePoster = AnimePoster(
         title = "Аниме без данных",
         description = null,
         drawableName = null
     )
     val sampleRatingsData = mapOf(5 to 10, 6 to 20, 7 to 5)
-    val sampleRecommendationsData = emptyList<AnimeData>()
+    val sampleRecommendationsData = emptyList<AnimePoster>()
 
     MaterialTheme {
         Surface(
@@ -173,7 +176,7 @@ fun AnimeDetailScreenNoDataPreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             AnimeDetailScreen(
-                anime = sampleAnimeData,
+                anime = sampleAnimePoster,
                 ratings = sampleRatingsData,
                 recommendations = sampleRecommendationsData
             )

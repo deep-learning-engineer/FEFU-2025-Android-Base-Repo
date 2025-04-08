@@ -1,4 +1,4 @@
-package co.feip.fefu2025
+package co.feip.fefu2025.presentation.anime_list.components
 
 import android.content.res.Resources
 import androidx.compose.foundation.Image
