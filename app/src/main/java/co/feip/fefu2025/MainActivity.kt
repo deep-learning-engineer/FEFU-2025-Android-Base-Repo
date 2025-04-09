@@ -3,17 +3,4 @@ package co.feip.fefu2025
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        if (savedInstanceState == null) {
-            val animeFragment = AnimeFragment()
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, animeFragment)
-                .commit()
-        }
-    }
-}
+class MainActivity : AppCompatActivity() {}
