@@ -5,12 +5,12 @@ plugins {
 }
 
 android {
-    namespace = "com.example.lab1"
+    namespace = "co.feip.fefu2025"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.lab1"
-        minSdk = 26
+        applicationId = "co.feip.fefu2025"
+        minSdk = 24
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -36,6 +36,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
 }
 

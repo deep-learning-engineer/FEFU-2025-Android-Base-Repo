@@ -19,5 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Lab1"
+rootProject.name = "FEFU 2025 Android Base repo"
 include(":app")
+ 

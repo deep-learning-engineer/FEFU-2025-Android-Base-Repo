@@ -1,4 +1,3 @@
 <resources>
-    <string name="app_name">MainActivity1</string>
-    <string name="title_activity_main2">MainActivity2</string>
+    <string name="app_name">AnimeCategory</string>
 </resources>
