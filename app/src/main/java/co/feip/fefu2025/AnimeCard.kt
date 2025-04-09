@@ -14,16 +14,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import java.util.Locale
 
+val SimpleAnimeCardHeight: Dp = 250.dp
 
 @Composable
 fun SimpleAnimeCard(
     title: String,
-    description: String?,
     drawableName: String?,
+    genres: List<String>?,
+    rating: Float?,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -39,7 +44,7 @@ fun SimpleAnimeCard(
     Card(
         modifier = modifier
             .width(130.dp)
-            .height(IntrinsicSize.Min)
+            .height(SimpleAnimeCardHeight)
     ) {
         Column(
             modifier = Modifier.fillMaxHeight()
@@ -50,7 +55,6 @@ fun SimpleAnimeCard(
                     contentDescription = title,
                     modifier = Modifier
                         .height(150.dp)
-                        .weight(1f)
                         .fillMaxWidth(),
                     contentScale = ContentScale.Crop
                 )
@@ -58,7 +62,6 @@ fun SimpleAnimeCard(
                 Box(
                     modifier = Modifier
                         .height(150.dp)
-                        .weight(1f)
                         .fillMaxWidth()
                         .background(Color.LightGray),
                     contentAlignment = Alignment.Center
@@ -67,70 +70,131 @@ fun SimpleAnimeCard(
                 }
             }
 
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .weight(1f)
                     .padding(horizontal = 8.dp)
                     .padding(top = 6.dp, bottom = 8.dp)
             ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleSmall,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                if (!description.isNullOrBlank()) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                Column(
+                    modifier = Modifier.align(Alignment.TopStart)
+                ) {
                     Text(
-                        text = description,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 3,
+                        text = title,
+                        style = MaterialTheme.typography.titleSmall,
+                        maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
+
+                    if (!genres.isNullOrEmpty()) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = genres.joinToString(", "),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
+
+                val textRating = if (rating != null) {
+                    "⭐ %.1f".format(Locale.US, rating)
+                } else {
+                    "⭐ Нет рейтинга"
+                }
+
+                Text(
+                    text = textRating,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    modifier = Modifier.align(Alignment.BottomStart)
+                )
             }
         }
     }
 }
 
+// --- Previews ---
 
-// Preview с описанием
-@Preview(showBackground = true, name = "Card with Drawable")
+// Preview с полным описанием
+@Preview(showBackground = true, name = "Card with All Info")
 @Composable
-fun SimpleAnimeCardDrawablePreview() {
+fun SimpleAnimeCardAllInfoPreview() {
     MaterialTheme {
         SimpleAnimeCard(
-            title = "Блич",
-            description = "Аниме про рыжеволосого школьника Ичиго Куросаки, который случайно получает силы шинигами.",
-            drawableName = "bleach"
+            title = "Блич: Тысячелетняя кровавая война - Часть Вторая",
+            drawableName = "anime",
+            genres = listOf("Экшен", "Приключения", "Фэнтези", "Драма"),
+            rating = 9.1f
         )
     }
 }
 
-// Preview для карточки без описания
-@Preview(showBackground = true, name = "Card without Description")
+// Preview c длинным названием/жанрами для проверки обрезки
+@Preview(showBackground = true, name = "Card with Long Content")
 @Composable
-fun SimpleAnimeCardNoDescriptionPreview() {
+fun SimpleAnimeCardLongContentPreview() {
     MaterialTheme {
         SimpleAnimeCard(
-            title = "Ван Пис",
-            description = null,
-            drawableName = null
+            title = "Атака Титанов: Финал – Заключительная глава (Часть 2)",
+            drawableName = null,
+            genres = listOf("Экшен", "Приключения", "Комедия", "Драма", "Фэнтези", "Ужасы", "Сверхъестественное", "Триллер"),
+            rating = 9.0f
         )
     }
 }
 
-// Preview для карточки c длинным описанием
-@Preview(showBackground = true, name = "Card with Long Description")
+// Preview без жанров, рейтинга и изображения
+@Preview(showBackground = true, name = "Card Minimal Info")
 @Composable
-fun SimpleAnimeCardLongDescriptionPreview() {
+fun SimpleAnimeCardMinimalPreview() {
     MaterialTheme {
         SimpleAnimeCard(
-            title = "Наруто: Ураганные хроники",
-            description = "Продолжение истории Наруто Узумаки.",
-            drawableName = null
+            title = "Наруто",
+            drawableName = null,
+            genres = null,
+            rating = null
         )
+    }
+}
+
+// Preview для сравнения высоты и расположения элементов внутри карточки
+@Preview(showBackground = true, name = "Compare Layouts")
+@Composable
+fun CompareCardLayoutsPreview() {
+    MaterialTheme {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            SimpleAnimeCard(
+                title = "Очень Длинный Заголовок Для Теста В Две Строки",
+                drawableName = "anime",
+                genres = listOf("Экшен", "Фэнтези"),
+                rating = 9.1f
+            )
+
+            SimpleAnimeCard(
+                title = "Заголовок",
+                drawableName = "anime",
+                genres = listOf("Экшен", "Фэнтези"),
+                rating = 8.7f
+            )
+
+            SimpleAnimeCard(
+                title = "Еще Один Очень Длинный Заголовок Для Теста",
+                drawableName = null,
+                genres = null,
+                rating = 8.0f
+            )
+
+            SimpleAnimeCard(
+                title = "Просто Заголовок",
+                drawableName = null,
+                genres = null,
+                rating = 7.5f
+            )
+        }
     }
 }

@@ -19,10 +19,11 @@ fun MainScreen() {
 
     val animeTemplates = remember {
         listOf(
-            AnimeData("Блич", "Приключения Ичиго Куросаки, ставшего шинигами.", "bleach"),
-            AnimeData("Наруто", "История ниндзя Наруто Узумаки.", "naruto"),
-            AnimeData("One Piece", "Поиски величайшего сокровища пиратом Луффи.", "onepiece"),
-            AnimeData("Атака Титанов", "Человечество сражается с гигантами-людоедами.", "attack_on_titan"),
+            AnimeData("Атака Титанов", null, "attack_on_titan", listOf("Экшен", "Драма", "Фэнтези"), 2013, 9.0f, emptyMap(), 88),
+            AnimeData("Наруто: Ураганные хроники", null, "naruto", listOf("Экшен", "Приключения", "Комедия"), 2007, 8.7f, emptyMap(), 500),
+            AnimeData("One Piece", null, "onepiece", listOf("Экшен", "Приключения", "Комедия", "Фэнтези"), 1999, 8.7f, emptyMap(), 1000),
+            AnimeData("Магическая битва", null, "jujutsu_kaisen", listOf("Экшен", "Тёмное фэнтези", "Сверхъестественное"), 2020, 8.8f, emptyMap(), 47),
+            AnimeData("Клинок, рассекающий демонов", null, "demon_slayer", listOf("Экшен", "Тёмное фэнтези", "Исторический"), 2019, 8.9f, emptyMap(), 55)
         )
     }
 
@@ -67,7 +68,8 @@ fun MainScreen() {
 
                 SimpleAnimeCard(
                     title = randomAnime.title,
-                    description = randomAnime.description,
+                    genres = randomAnime.genres,
+                    rating = randomAnime.rating,
                     drawableName = randomAnime.drawableName,
                     modifier = Modifier.fillMaxWidth()
                 )
