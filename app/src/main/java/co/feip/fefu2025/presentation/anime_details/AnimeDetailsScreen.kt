@@ -1,10 +1,12 @@
 package co.feip.fefu2025.presentation.anime_details
 
+import android.graphics.drawable.GradientDrawable
+import android.view.ViewGroup
+import android.widget.TextView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -15,21 +17,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import java.util.Locale
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.viewinterop.AndroidView
+import co.feip.fefu2025.SimpleAnimeCard
+import co.feip.fefu2025.domain.model.AnimeDetails
 import co.feip.fefu2025.domain.model.AnimePoster
+import co.feip.fefu2025.presentation.anime_details.components.CustomFlexBox
 import co.feip.fefu2025.presentation.anime_details.components.RatingChart
-import co.feip.fefu2025.presentation.anime_list.components.SimpleAnimeCard
+import androidx.compose.foundation.lazy.items
 
 
 @Composable
-fun AnimeDetailScreen(
-    anime: AnimePoster,           // Данные основного аниме
-    ratings: Map<Int, Int>,     // Данные для графика рейтинга
-    recommendations: List<AnimePoster> // Список рекомендованных аниме
+fun AnimeDetailsScreen(
+    anime: AnimeDetails,
+    recommendations: List<AnimePoster>
 ) {
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    val density = LocalDensity.current
+
+    val chipBackgroundColor = MaterialTheme.colorScheme.surfaceVariant
+    val chipTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+
+    val horizontalSpacingPx = with(density) { 6.dp.toPx().toInt() }
+    val verticalSpacingPx = with(density) { 6.dp.toPx().toInt() }
 
     Column(
         modifier = Modifier
@@ -48,11 +63,11 @@ fun AnimeDetailScreen(
                 contentDescription = anime.title,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp)
-                ,
+                    .height(300.dp),
                 contentScale = ContentScale.Crop
             )
         } else {
+            // Плейсхолдер, если изображения нет
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -60,7 +75,7 @@ fun AnimeDetailScreen(
                     .background(Color.Gray),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Постер недоступен", color = Color.White)
+                Text("Постер недоступен", style = MaterialTheme.typography.bodyLarge, color = Color.White)
             }
         }
 
@@ -69,30 +84,182 @@ fun AnimeDetailScreen(
                 text = anime.title,
                 style = MaterialTheme.typography.headlineMedium
             )
+
             Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (anime.releaseYear != null) {
+                    Text(
+                        text = "Год: ${anime.releaseYear}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    if (anime.episodeCount != null) {
+                        Text(
+                            text = " • ",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                if (anime.episodeCount != null) {
+                    Text(
+                        text = "Эпизоды: ${anime.episodeCount}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            if (anime.releaseYear != null || anime.episodeCount != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            if (anime.rating != null) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Рейтинг: ",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "⭐ %.1f".format(Locale.US, anime.rating),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+            } else {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+
+            if (!anime.genres.isNullOrEmpty()) {
+                Text(
+                    text = "Жанр:",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                AndroidView(
+                    modifier = Modifier.fillMaxWidth(),
+                    factory = { ctx ->
+                        CustomFlexBox(ctx).apply {
+                            layoutParams = ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                            )
+
+                            this.horizontalSpacing = horizontalSpacingPx
+                            this.verticalSpacing = verticalSpacingPx
+                        }
+                    },
+                    update = { customFlexBox ->
+                        customFlexBox.removeAllViews()
+
+                        val genres = anime.genres
+
+                        genres.forEach { genreText ->
+                            val textView = TextView(customFlexBox.context).apply {
+                                text = genreText
+                                setPadding(
+                                    with(density) { 8.dp.toPx().toInt() },
+                                    with(density) { 4.dp.toPx().toInt() },
+                                    with(density) { 8.dp.toPx().toInt() },
+                                    with(density) { 4.dp.toPx().toInt() }
+                                )
+
+                                background = GradientDrawable().apply {
+                                    shape = GradientDrawable.RECTANGLE
+                                    cornerRadius = with(density) { 16.dp.toPx() }
+
+                                    setColor(
+                                        android.graphics.Color.argb(
+                                            (chipBackgroundColor.alpha * 255).toInt(),
+                                            (chipBackgroundColor.red * 255).toInt(),
+                                            (chipBackgroundColor.green * 255).toInt(),
+                                            (chipBackgroundColor.blue * 255).toInt()
+                                        )
+                                    )
+                                }
+
+                                setTextColor(
+                                    android.graphics.Color.argb(
+                                        (chipTextColor.alpha * 255).toInt(),
+                                        (chipTextColor.red * 255).toInt(),
+                                        (chipTextColor.green * 255).toInt(),
+                                        (chipTextColor.blue * 255).toInt()
+                                    )
+                                )
+
+                                textSize = 11f
+                                layoutParams = ViewGroup.MarginLayoutParams(
+                                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT
+                                ).apply {
+                                    setMargins(
+                                        with(density) { 2.dp.toPx().toInt() },
+                                        with(density) { 2.dp.toPx().toInt() },
+                                        with(density) { 2.dp.toPx().toInt() },
+                                        with(density) { 2.dp.toPx().toInt() }
+                                    )
+                                }
+                            }
+                            customFlexBox.addView(textView)
+                        }
+
+                        customFlexBox.requestLayout()
+                        customFlexBox.invalidate()
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            if (anime.ratingInfo.isNotEmpty()) {
+                Text(
+                    text = "Рейтинг по оценкам:",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                RatingChart(
+                    ratings = anime.ratingInfo,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            Text(
+                text = "Описание:",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
             if (!anime.description.isNullOrBlank()) {
                 Text(
                     text = anime.description,
                     style = MaterialTheme.typography.bodyLarge
                 )
             } else {
+                // Плейсхолдер, если описание отсутствует
                 Text(
                     text = "Описание отсутствует.",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
-        }
 
-        Column(Modifier.padding(horizontal = 16.dp)) {
-            Text("Рейтинг пользователей", style = MaterialTheme.typography.titleLarge)
-            Spacer(modifier = Modifier.height(8.dp))
-            RatingChart(ratings = ratings)
             Spacer(modifier = Modifier.height(24.dp))
         }
 
         if (recommendations.isNotEmpty()) {
-            Column(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
+            Column(Modifier.padding(horizontal = 16.dp)) {
                 Text(
                     text = "Может понравиться",
                     style = MaterialTheme.typography.titleLarge
@@ -101,47 +268,48 @@ fun AnimeDetailScreen(
 
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.padding(bottom = 16.dp)
                 ) {
                     items(recommendations.take(10)) { recommendedAnime ->
                         SimpleAnimeCard(
-                            title = recommendedAnime.title,
-                            description = recommendedAnime.description,
-                            drawableName = recommendedAnime.drawableName,
+                            animePoster = recommendedAnime
                         )
                     }
                 }
             }
         } else {
+            // Если рекомендаций нет, добавим небольшой отступ снизу
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
-@Preview(showBackground = true, heightDp = 1100)
-@Composable
-fun AnimeDetailScreenPreview() {
-    val sampleAnimePoster = AnimePoster(
-        title = "Блич",
-        description = "Центральный персонаж «Блич» — пятнадцатилетний школьник Ичиго Куросаки, случайно получивший сверхъестественные силы синигами — богов смерти. Синигами в Японии представляют собой персонифицированную смерть, наподобие западного скелета с косой. Наделённый их способностями, Ичиго вынужден сражаться со злыми духами, защищать людей и отправлять души умерших в загробный мир.",
-        drawableName = "bleach"
-    )
 
-    val sampleRatingsData = mapOf(
-        1 to 10, 2 to 5, 3 to 20, 4 to 40, 5 to 80,
-        6 to 150, 7 to 300, 8 to 500, 9 to 450, 10 to 350
+// --- Previews ---
+
+// Preview аниме со всеми полями
+@Preview(showBackground = true, heightDp = 1200)
+@Composable
+fun AnimeDetailsScreenPreview() {
+    val sampleAnimeDetails = AnimeDetails(
+        title = "Блич: Тысячелетняя кровавая война",
+        description = "Продолжение культового аниме, где Ичиго Куросаки и его друзья сталкиваются с Ванденрейхом, армией квинси, стремящейся уничтожить Общество Душ. Новые битвы, раскрытие тайн прошлого и эпическое завершение истории.",
+        drawableName = "bleach",
+        genres = listOf("Экшен", "Приключения", "Сверхъестественное", "Сёнен", "Фэнтези", "Драма", "Суперсила"),
+        releaseYear = 2022,
+        rating = 9.1f,
+        ratingInfo = mapOf(
+            5 to 30, 6 to 80, 7 to 250, 8 to 700, 9 to 1200, 10 to 900
+        ),
+        episodeCount = 26
     )
 
     val sampleRecommendationsData = listOf(
-        AnimePoster("Блич", "Приключения Ичиго Куросаки, ставшего шинигами.", "bleach"),
-        AnimePoster("Наруто", "История ниндзя Наруто Узумаки.", "naruto"),
-        AnimePoster("One Piece", "Поиски величайшего сокровища пиратом Луффи.", "onepiece"),
-        AnimePoster("Атака Титанов", "Человечество сражается с гигантами-людоедами.", "attack_on_titan"),
-        AnimePoster("Блич", "Приключения Ичиго Куросаки, ставшего шинигами.", "bleach"),
-        AnimePoster("Наруто", "История ниндзя Наруто Узумаки.", "naruto"),
-        AnimePoster("One Piece", "Поиски величайшего сокровища пиратом Луффи.", "onepiece"),
-        AnimePoster("Атака Титанов", "Человечество сражается с гигантами-людоедами.", "attack_on_titan"),
-        AnimePoster("Блич", "Приключения Ичиго Куросаки, ставшего шинигами.", "bleach"),
-        AnimePoster("Наруто", "История ниндзя Наруто Узумаки.", "naruto"),
+        AnimePoster("Атака Титанов", "attack_on_titan", listOf("Экшен", "Драма", "Фэнтези"), 9.0f),
+        AnimePoster("Наруто: Ураганные хроники", "naruto", listOf("Экшен", "Приключения", "Комедия"), 8.7f),
+        AnimePoster("One Piece",  "onepiece", listOf("Экшен", "Приключения", "Комедия", "Фэнтези"), 8.7f),
+        AnimePoster("Магическая битва", "jujutsu_kaisen", listOf("Экшен", "Тёмное фэнтези", "Сверхъестественное"), 8.8f),
+        AnimePoster("Клинок, рассекающий демонов",  "demon_slayer", listOf("Экшен", "Тёмное фэнтези", "Исторический"), 8.9f)
     )
 
     MaterialTheme {
@@ -149,25 +317,29 @@ fun AnimeDetailScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            AnimeDetailScreen(
-                anime = sampleAnimePoster,
-                ratings = sampleRatingsData,
+            AnimeDetailsScreen(
+                anime = sampleAnimeDetails,
                 recommendations = sampleRecommendationsData
             )
         }
     }
 }
 
-// Preview для случая без описания или без картинки
-@Preview(showBackground = true, name = "Details No Desc/Image")
+// Preview аниме без необязательных полей
+@Preview(showBackground = true, name = "Details No Optional Data")
 @Composable
-fun AnimeDetailScreenNoDataPreview() {
-    val sampleAnimePoster = AnimePoster(
-        title = "Аниме без данных",
-        description = null,
-        drawableName = null
+fun AnimeDetailsScreenNoOptionalDataPreview() {
+    val sampleAnimeDetails = AnimeDetails(
+        title = "Аниме",
+        description = null,  // Нет описания
+        drawableName = null, // Нет картинки
+        genres = null,       // Нет жанров
+        releaseYear = null,  // Нет года
+        rating = null,       // Нет рейтинга
+        ratingInfo = emptyMap(),   // Нет информации о рейтинге
+        episodeCount = null  // Нет кол-ва эпизодов
     )
-    val sampleRatingsData = mapOf(5 to 10, 6 to 20, 7 to 5)
+
     val sampleRecommendationsData = emptyList<AnimePoster>()
 
     MaterialTheme {
@@ -175,9 +347,8 @@ fun AnimeDetailScreenNoDataPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            AnimeDetailScreen(
-                anime = sampleAnimePoster,
-                ratings = sampleRatingsData,
+            AnimeDetailsScreen(
+                anime = sampleAnimeDetails,
                 recommendations = sampleRecommendationsData
             )
         }

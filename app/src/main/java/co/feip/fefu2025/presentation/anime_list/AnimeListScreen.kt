@@ -10,8 +10,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import co.feip.fefu2025.SimpleAnimeCard
 import co.feip.fefu2025.domain.model.AnimePoster
-import co.feip.fefu2025.presentation.anime_list.components.SimpleAnimeCard
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,10 +21,11 @@ fun AnimeListScreen() {
 
     val animeTemplates = remember {
         listOf(
-            AnimePoster("Блич", "Приключения Ичиго Куросаки, ставшего шинигами.", "bleach"),
-            AnimePoster("Наруто", "История ниндзя Наруто Узумаки.", "naruto"),
-            AnimePoster("One Piece", "Поиски величайшего сокровища пиратом Луффи.", "onepiece"),
-            AnimePoster("Атака Титанов", "Человечество сражается с гигантами-людоедами.", "attack_on_titan"),
+            AnimePoster("Атака Титанов", "attack_on_titan", listOf("Экшен", "Драма", "Фэнтези"), 9.0f),
+            AnimePoster("Наруто: Ураганные хроники", "naruto", listOf("Экшен", "Приключения", "Комедия"), 8.7f),
+            AnimePoster("One Piece",  "onepiece", listOf("Экшен", "Приключения", "Комедия", "Фэнтези"), 8.7f),
+            AnimePoster("Магическая битва", "jujutsu_kaisen", listOf("Экшен", "Тёмное фэнтези", "Сверхъестественное"), 8.8f),
+            AnimePoster("Клинок, рассекающий демонов",  "demon_slayer", listOf("Экшен", "Тёмное фэнтези", "Исторический"), 8.9f)
         )
     }
 
@@ -65,12 +66,10 @@ fun AnimeListScreen() {
                 count = 30,
             ) { index ->
 
-                val randomAnime = animeTemplates.random() // Получаем случайный AnimeData из списка
+                val randomAnime = animeTemplates.random() // Получаем случайный AnimePoster из списка
 
                 SimpleAnimeCard(
-                    title = randomAnime.title,
-                    description = randomAnime.description,
-                    drawableName = randomAnime.drawableName,
+                    animePoster = randomAnime,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
