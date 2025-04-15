@@ -5,5 +5,6 @@ import co.feip.fefu2025.domain.model.AnimePoster
 data class AnimeListState(
     val posters: List<AnimePoster>? = null,
     val isLoading: Boolean = false,
-    val error: String = ""
+    val error: String = "",
+    val searchQuery: String = ""
 )

@@ -13,7 +13,7 @@ import javax.inject.Inject
 class GetAnimeDetailsUseCase @Inject constructor (
     private val repository: AnimeRepository
 ) {
-    operator fun invoke(animeId: String): Flow<Resource<AnimeDetails>> = flow {
+    operator fun invoke(animeId: Int): Flow<Resource<AnimeDetails>> = flow {
         try {
             emit(Resource.Loading<AnimeDetails>())
             val detail = repository.getAnimeDetailsById(animeId)

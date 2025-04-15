@@ -5,4 +5,5 @@ data class AnimePoster(
     val drawableName: String?,
     val genres: List<String>?,
     val rating: Float?,
+    val id: Int
 )

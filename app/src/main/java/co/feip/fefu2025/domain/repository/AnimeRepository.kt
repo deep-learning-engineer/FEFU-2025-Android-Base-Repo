@@ -5,5 +5,6 @@ import co.feip.fefu2025.domain.model.AnimePoster
 
 interface AnimeRepository {
     suspend fun getAnimePosters(): List<AnimePoster>
-    suspend fun getAnimeDetailsById(id: String): AnimeDetails
+    suspend fun getAnimeDetailsById(id: Int): AnimeDetails
+    suspend fun getFavoriteAnimePostersByUserId(id: Int): List<AnimePoster>
 }

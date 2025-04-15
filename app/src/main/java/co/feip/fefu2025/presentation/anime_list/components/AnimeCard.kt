@@ -3,6 +3,7 @@ package co.feip.fefu2025
 import android.content.res.Resources
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -27,7 +28,8 @@ val SimpleAnimeCardHeight: Dp = 250.dp
 @Composable
 fun SimpleAnimeCard(
     animePoster: AnimePoster,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navigateToDetails: (Int) -> Unit
 ) {
     val context = LocalContext.current
     val resources: Resources = context.resources
@@ -42,7 +44,9 @@ fun SimpleAnimeCard(
     Card(
         modifier = modifier
             .width(130.dp)
-            .height(SimpleAnimeCardHeight)
+            .height(SimpleAnimeCardHeight).clickable {
+                navigateToDetails(animePoster.id)
+            }
     ) {
         Column(
             modifier = Modifier.fillMaxHeight()
@@ -116,91 +120,91 @@ fun SimpleAnimeCard(
     }
 }
 
-// --- Previews ---
+//// --- Previews ---
+//
+//@Preview(showBackground = true, name = "Card with All Info")
+//@Composable
+//fun SimpleAnimeCardAllInfoPreview() {
+//    val posterData = AnimePoster(
+//        title = "Блич: Тысячелетняя кровавая война - Часть Вторая",
+//        drawableName = "bleach",
+//        genres = listOf("Экшен", "Приключения", "Фэнтези", "Драма"),
+//        rating = 9.1f
+//    )
+//    MaterialTheme {
+//        SimpleAnimeCard(animePoster = posterData)
+//    }
+//}
+//
+//@Preview(showBackground = true, name = "Card with Long Content")
+//@Composable
+//fun SimpleAnimeCardLongContentPreview() {
+//    val posterData = AnimePoster(
+//        title = "Атака Титанов: Финал – Заключительная глава (Часть 2)",
+//        drawableName = null,
+//        genres = listOf("Экшен", "Приключения", "Комедия", "Драма", "Фэнтези", "Ужасы", "Сверхъестественное", "Триллер"),
+//        rating = 9.0f
+//    )
+//    MaterialTheme {
+//        SimpleAnimeCard(animePoster = posterData)
+//    }
+//}
 
-@Preview(showBackground = true, name = "Card with All Info")
-@Composable
-fun SimpleAnimeCardAllInfoPreview() {
-    val posterData = AnimePoster(
-        title = "Блич: Тысячелетняя кровавая война - Часть Вторая",
-        drawableName = "bleach",
-        genres = listOf("Экшен", "Приключения", "Фэнтези", "Драма"),
-        rating = 9.1f
-    )
-    MaterialTheme {
-        SimpleAnimeCard(animePoster = posterData)
-    }
-}
+//@Preview(showBackground = true, name = "Card Minimal Info")
+//@Composable
+//fun SimpleAnimeCardMinimalPreview() {
+//    val posterData = AnimePoster(
+//        title = "Наруто",
+//        drawableName = null,
+//        genres = null,
+//        rating = null
+//    )
+//    MaterialTheme {
+//        SimpleAnimeCard(animePoster = posterData)
+//    }
+//}
 
-@Preview(showBackground = true, name = "Card with Long Content")
-@Composable
-fun SimpleAnimeCardLongContentPreview() {
-    val posterData = AnimePoster(
-        title = "Атака Титанов: Финал – Заключительная глава (Часть 2)",
-        drawableName = null,
-        genres = listOf("Экшен", "Приключения", "Комедия", "Драма", "Фэнтези", "Ужасы", "Сверхъестественное", "Триллер"),
-        rating = 9.0f
-    )
-    MaterialTheme {
-        SimpleAnimeCard(animePoster = posterData)
-    }
-}
-
-@Preview(showBackground = true, name = "Card Minimal Info")
-@Composable
-fun SimpleAnimeCardMinimalPreview() {
-    val posterData = AnimePoster(
-        title = "Наруто",
-        drawableName = null,
-        genres = null,
-        rating = null
-    )
-    MaterialTheme {
-        SimpleAnimeCard(animePoster = posterData)
-    }
-}
-
-@Preview(showBackground = true, name = "Compare Layouts")
-@Composable
-fun CompareCardLayoutsPreview() {
-    MaterialTheme {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-
-            SimpleAnimeCard(
-                animePoster = AnimePoster(
-                    title = "Очень Длинный Заголовок Для Теста В Две Строки",
-                    drawableName = "bleach",
-                    genres = listOf("Экшен", "Фэнтези"),
-                    rating = 9.1f
-                )
-            )
-
-            SimpleAnimeCard(
-                animePoster = AnimePoster(
-                    title = "Заголовок",
-                    drawableName = "bleach",
-                    genres = listOf("Экшен", "Фэнтези"),
-                    rating = 8.7f
-                )
-            )
-
-            SimpleAnimeCard(
-                animePoster = AnimePoster(
-                    title = "Еще Один Очень Длинный Заголовок Для Теста",
-                    drawableName = null,
-                    genres = null,
-                    rating = 8.0f
-                )
-            )
-
-            SimpleAnimeCard(
-                animePoster = AnimePoster(
-                    title = "Просто Заголовок",
-                    drawableName = null,
-                    genres = null,
-                    rating = 7.5f
-                )
-            )
-        }
-    }
-}
+//@Preview(showBackground = true, name = "Compare Layouts")
+//@Composable
+//fun CompareCardLayoutsPreview() {
+//    MaterialTheme {
+//        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+//
+//            SimpleAnimeCard(
+//                animePoster = AnimePoster(
+//                    title = "Очень Длинный Заголовок Для Теста В Две Строки",
+//                    drawableName = "bleach",
+//                    genres = listOf("Экшен", "Фэнтези"),
+//                    rating = 9.1f
+//                )
+//            )
+//
+//            SimpleAnimeCard(
+//                animePoster = AnimePoster(
+//                    title = "Заголовок",
+//                    drawableName = "bleach",
+//                    genres = listOf("Экшен", "Фэнтези"),
+//                    rating = 8.7f
+//                )
+//            )
+//
+//            SimpleAnimeCard(
+//                animePoster = AnimePoster(
+//                    title = "Еще Один Очень Длинный Заголовок Для Теста",
+//                    drawableName = null,
+//                    genres = null,
+//                    rating = 8.0f
+//                )
+//            )
+//
+//            SimpleAnimeCard(
+//                animePoster = AnimePoster(
+//                    title = "Просто Заголовок",
+//                    drawableName = null,
+//                    genres = null,
+//                    rating = 7.5f
+//                )
+//            )
+//        }
+//    }
+//}

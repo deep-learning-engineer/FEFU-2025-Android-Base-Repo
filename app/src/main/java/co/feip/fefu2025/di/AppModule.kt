@@ -17,4 +17,11 @@ class AppModule {
     fun provideAnimeRepository(api: AnimeAPI): AnimeRepository {
         return RepositoryImpl(api)
     }
+
+    @Provides
+    fun provideApi(): AnimeAPI{
+        val api = object : AnimeAPI {}
+        return api
+    }
+
 }

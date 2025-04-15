@@ -8,5 +8,7 @@ data class AnimeDetails (
     val releaseYear: Int?,
     val rating: Float?,
     val ratingInfo: Map<Int, Int>,
-    val episodeCount: Int?
+    val episodeCount: Int?,
+    val recommendations: List<AnimePoster>,
+    val id: Int
 )
