@@ -19,7 +19,8 @@ import co.feip.fefu2025.SimpleAnimeCard
 fun AnimeFavoritesScreen(
     state: AnimeFavoritesState,
     navigateToDetails: (Int) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onRetry: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -36,59 +37,75 @@ fun AnimeFavoritesScreen(
             )
         }
     ) { paddingValues ->
-        when {
-            state.isLoading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            when {
+                state.isLoading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            }
-            state.error.isNotBlank() -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = state.error)
+
+                state.error.isNotBlank() -> {
+                    Column(
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = state.error,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                        Button(
+                            onClick = onRetry,
+                            modifier = Modifier.padding(top = 16.dp)
+                        ) {
+                            Text("Повторить")
+                        }
+                    }
                 }
-            }
-            else -> {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(horizontal = 8.dp),
-                    contentPadding = PaddingValues(vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    state.posters?.let { posters ->
-                        if (posters.isEmpty()) {
-                            item(span = { GridItemSpan(2) }) {
-                                Box(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "У вас пока нет понравившихся аниме",
-                                        style = MaterialTheme.typography.bodyLarge
+
+                else -> {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .padding(horizontal = 8.dp),
+                        contentPadding = PaddingValues(vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        state.posters?.let { posters ->
+                            if (posters.isEmpty()) {
+                                item(span = { GridItemSpan(2) }) {
+                                    Box(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "У вас пока нет понравившихся аниме",
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    }
+                                }
+                            } else {
+                                items(posters.size) { index ->
+                                    val anime = posters[index]
+                                    SimpleAnimeCard(
+                                        animePoster = anime,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        navigateToDetails = { navigateToDetails(anime.id) },
                                     )
                                 }
-                            }
-                        } else {
-                            items(posters.size) { index ->
-                                val anime = posters[index]
-                                SimpleAnimeCard(
-                                    animePoster = anime,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    navigateToDetails = { navigateToDetails(anime.id) },
-                                )
                             }
                         }
                     }

@@ -10,18 +10,20 @@ import retrofit2.HttpException
 import javax.inject.Inject
 
 
-class GetAnimeDetailsUseCase @Inject constructor (
+class GetAnimeDetailsUseCase @Inject constructor(
     private val repository: AnimeRepository
 ) {
     operator fun invoke(animeId: Int): Flow<Resource<AnimeDetails>> = flow {
         try {
-            emit(Resource.Loading<AnimeDetails>())
+            emit(Resource.Loading())
             val detail = repository.getAnimeDetailsById(animeId)
-            emit(Resource.Success<AnimeDetails>(detail))
-        } catch(e: HttpException) {
-            emit(Resource.Error<AnimeDetails>(e.localizedMessage ?: "An unexpected error occured"))
-        } catch(e: IOException) {
-            emit(Resource.Error<AnimeDetails>("Couldn't reach server. Check your internet connection."))
+            emit(Resource.Success(detail))
+        } catch (e: HttpException) {
+            emit(Resource.Error(e.localizedMessage ?: "HTTP error occurred"))
+        } catch (e: IOException) {
+            emit(Resource.Error("Couldn't reach server. Check your internet connection."))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "An unexpected error occurred"))
         }
     }
 }

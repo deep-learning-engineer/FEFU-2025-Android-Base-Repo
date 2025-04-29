@@ -22,24 +22,34 @@ class AnimeFavoritesViewModel @Inject constructor(
     private val _state = mutableStateOf(AnimeFavoritesState())
     val state: State<AnimeFavoritesState> = _state
 
+    private var userId: Int = -1
+
     init {
-        val id = savedStateHandle.toRoute<Destination.AnimeFavoritesScreen>().id
-        getFavoritesAnime(id)
+        userId = savedStateHandle.toRoute<Destination.AnimeFavoritesScreen>().id
+        loadFavorites()
     }
 
-    private fun getFavoritesAnime(userId: Int) {
+    fun loadFavorites() {
+        _state.value = _state.value.copy(
+            isLoading = true,
+            error = "",
+            posters = null
+        )
+
         getFavoritesAnimeUseCase(userId).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    _state.value = AnimeFavoritesState(posters = result.data)
-                }
-
-                is Resource.Error -> {
                     _state.value = AnimeFavoritesState(
-                        error = result.message ?: "An unexpected error occured"
+                        posters = result.data,
+                        isLoading = false
                     )
                 }
-
+                is Resource.Error -> {
+                    _state.value = AnimeFavoritesState(
+                        error = result.message ?: "An unexpected error occurred",
+                        isLoading = false
+                    )
+                }
                 is Resource.Loading -> {
                     _state.value = AnimeFavoritesState(isLoading = true)
                 }

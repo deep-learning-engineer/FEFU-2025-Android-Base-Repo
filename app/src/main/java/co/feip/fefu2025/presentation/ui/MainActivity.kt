@@ -16,6 +16,7 @@ import co.feip.fefu2025.presentation.anime_favorites.AnimeFavoritesViewModel
 import co.feip.fefu2025.presentation.anime_favorites.AnimeFavoritesScreen
 import co.feip.fefu2025.presentation.anime_list.AnimeListScreen
 import co.feip.fefu2025.presentation.anime_list.AnimeListViewModel
+import co.feip.fefu2025.presentation.anime_list.AnimeSearchScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
 
@@ -38,6 +39,8 @@ sealed class Destination{
     data class AnimeDetailsScreen(val id: Int): Destination()
     @Serializable
     data class AnimeFavoritesScreen(val id: Int): Destination()
+    @Serializable
+    object AnimeSearchScreen: Destination()
 }
 
 @Composable
@@ -51,10 +54,11 @@ fun Navigation(navController: NavHostController = rememberNavController()){
             val state = viewModel.state.value
             AnimeListScreen(
                 state = state,
-                onQueryChange = viewModel::onQueryChange,
                 navigateToDetails = { id -> navController.navigate(Destination.AnimeDetailsScreen(id)) },
                 navigateToFavorites = { id -> navController.navigate(Destination.AnimeFavoritesScreen(id))},
-                currentUserId = 1 // Пока заглушка
+                navigateToSearch = { navController.navigate(Destination.AnimeSearchScreen) },
+                currentUserId = 1, // Пока заглушка
+                onRetry = { viewModel.loadAnimeList() }
             )
         }
 
@@ -64,7 +68,8 @@ fun Navigation(navController: NavHostController = rememberNavController()){
             AnimeDetailsScreen(
                 state = state,
                 navigateToDetails = { id -> navController.navigate(Destination.AnimeDetailsScreen(id)) },
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                onRetry = { viewModel.loadAnimeDetails() },
             )
         }
 
@@ -74,7 +79,21 @@ fun Navigation(navController: NavHostController = rememberNavController()){
             AnimeFavoritesScreen(
                 state = state,
                 navigateToDetails = { id -> navController.navigate(Destination.AnimeDetailsScreen(id)) },
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                onRetry = { viewModel.loadFavorites() }
+            )
+        }
+
+        composable<Destination.AnimeSearchScreen> {
+            val viewModel: AnimeListViewModel = hiltViewModel()
+            val state = viewModel.state.value
+
+            AnimeSearchScreen(
+                state = state,
+                onQueryChange = viewModel::filterPostersByQuery,
+                onBackClick = { navController.popBackStack() },
+                onRetry = { viewModel.loadAnimeList() },
+                navigateToDetails = { id -> navController.navigate(Destination.AnimeDetailsScreen(id)) }
             )
         }
     }

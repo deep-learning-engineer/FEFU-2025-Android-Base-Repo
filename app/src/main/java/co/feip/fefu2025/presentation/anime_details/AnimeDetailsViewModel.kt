@@ -22,20 +22,32 @@ class AnimeDetailsViewModel @Inject constructor(
     private val _state = mutableStateOf(AnimeDetailsState())
     val state: State<AnimeDetailsState> = _state
 
+    private var animeId: Int = -1
+
     init {
-        val id = savedStateHandle.toRoute<Destination.AnimeDetailsScreen>().id
-        getAnimeDetails(id)
+        animeId = savedStateHandle.toRoute<Destination.AnimeDetailsScreen>().id
+        loadAnimeDetails()
     }
 
-    private fun getAnimeDetails(animeId: Int) {
+    fun loadAnimeDetails() {
+        _state.value = _state.value.copy(
+            isLoading = true,
+            error = "",
+            details = null
+        )
+
         getAnimeDetailsUseCase(animeId).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    _state.value = AnimeDetailsState(details = result.data)
+                    _state.value = AnimeDetailsState(
+                        details = result.data,
+                        isLoading = false
+                    )
                 }
                 is Resource.Error -> {
                     _state.value = AnimeDetailsState(
-                        error = result.message ?: "An unexpected error occured"
+                        error = result.message ?: "An unexpected error occurred",
+                        isLoading = false
                     )
                 }
                 is Resource.Loading -> {

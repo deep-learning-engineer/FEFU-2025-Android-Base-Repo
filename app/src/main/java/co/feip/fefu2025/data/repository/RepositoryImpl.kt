@@ -4,12 +4,22 @@ import co.feip.fefu2025.data.remote.AnimeAPI
 import co.feip.fefu2025.domain.model.AnimeDetails
 import co.feip.fefu2025.domain.model.AnimePoster
 import co.feip.fefu2025.domain.repository.AnimeRepository
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(
     private val api: AnimeAPI
 ) : AnimeRepository {
+    private var errorCounter = 0 // для имитации ошибки
+
     override suspend fun getAnimePosters(): List<AnimePoster> {
+        delay(3000)
+        errorCounter++
+
+        if (errorCounter % 3 == 0) {
+            throw Exception("Ошибка загрузки списка аниме.")
+        }
+
         return listOf(
             AnimePoster(
                 "Атака Титанов",
@@ -50,6 +60,13 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAnimeDetailsById(id: Int): AnimeDetails {
+        delay(1500)
+        errorCounter++
+
+        if (errorCounter % 3 == 0) {
+            throw Exception("Ошибка загрузки деталей аниме.")
+        }
+
         return AnimeDetails(
             title = "Блич: Тысячелетняя кровавая война",
             description = "Продолжение культового аниме, где Ичиго Куросаки и его друзья сталкиваются с Ванденрейхом, армией квинси, стремящейся уничтожить Общество Душ. Новые битвы, раскрытие тайн прошлого и эпическое завершение истории.",
@@ -111,6 +128,13 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun getFavoriteAnimePostersByUserId(id: Int): List<AnimePoster> {
+        delay(1500)
+        errorCounter++
+
+        if (errorCounter % 3 == 0) {
+            throw Exception("Ошибка загрузки избранного.")
+        }
+
         return listOf(
             AnimePoster(
                 "Атака Титанов",
