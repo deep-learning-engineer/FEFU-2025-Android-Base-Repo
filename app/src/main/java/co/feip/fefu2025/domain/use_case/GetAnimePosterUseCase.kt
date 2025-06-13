@@ -1,4 +1,4 @@
-package co.feip.fefu2025.domain.use_case.get_favorites
+package co.feip.fefu2025.domain.use_case.get_posters
 
 import co.feip.fefu2025.common.Resource
 import co.feip.fefu2025.domain.model.AnimePoster
@@ -10,14 +10,14 @@ import retrofit2.HttpException
 import javax.inject.Inject
 
 
-class GetFavoritesAnimeUseCase @Inject constructor(
+class GetAnimePosterUseCase @Inject constructor(
     private val repository: AnimeRepository
 ) {
-    operator fun invoke(userId: Int): Flow<Resource<List<AnimePoster>>> = flow {
+    operator fun invoke(page: Int): Flow<Resource<List<AnimePoster>>> = flow {
         try {
             emit(Resource.Loading())
-            val favorites = repository.getFavoriteAnimePostersByUserId(userId)
-            emit(Resource.Success(favorites))
+            val poster = repository.getAnimePosters(page)
+            emit(Resource.Success(poster))
         } catch (e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: "HTTP error occurred"))
         } catch (e: IOException) {
