@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import co.feip.fefu2025.common.Resource
-import co.feip.fefu2025.domain.use_case.get_favorites.GetFavoritesAnimeUseCase
+import co.feip.fefu2025.domain.use_case.GetSimilarAnimeUseCase
 import co.feip.fefu2025.presentation.ui.Destination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AnimeFavoritesViewModel @Inject constructor(
-    private val getFavoritesAnimeUseCase: GetFavoritesAnimeUseCase,
+    private val getFavoritesAnimeUseCase: GetSimilarAnimeUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _state = mutableStateOf(AnimeFavoritesState())
@@ -36,7 +36,7 @@ class AnimeFavoritesViewModel @Inject constructor(
             posters = null
         )
 
-        getFavoritesAnimeUseCase(userId).onEach { result ->
+        getFavoritesAnimeUseCase().onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     _state.value = AnimeFavoritesState(

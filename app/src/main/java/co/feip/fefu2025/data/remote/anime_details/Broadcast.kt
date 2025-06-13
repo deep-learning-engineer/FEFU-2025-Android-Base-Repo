@@ -1,8 +1,10 @@
 package co.feip.fefu2025.data.remoute.dto.anime_details
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Broadcast(
-    val day: String,
-    val string: String,
-    val time: String,
-    val timezone: String
+    val day: String?,
+    val string: String?,
+    val time: String?,
+    val timezone: String?
 )

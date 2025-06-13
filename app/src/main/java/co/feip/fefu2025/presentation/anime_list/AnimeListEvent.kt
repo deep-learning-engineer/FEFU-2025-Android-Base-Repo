@@ -1,4 +1,8 @@
 package co.feip.fefu2025.presentation.anime_list
 
-interface AnimeListEvent {
+sealed interface AnimeListEvent {
+    data object OnPageChange : AnimeListEvent
+    data class OnSearchQueryChange(val query: String) : AnimeListEvent
+    data object OnRetry : AnimeListEvent
+    data object OnSearchNextPage : AnimeListEvent
 }

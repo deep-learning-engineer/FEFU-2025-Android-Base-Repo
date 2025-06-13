@@ -6,5 +6,7 @@ data class AnimeListState(
     val posters: List<AnimePoster>? = null,
     val isLoading: Boolean = false,
     val error: String = "",
-    val searchQuery: String = ""
+    val searchQuery: String = "",
+    val page: Int = 1,
+    val searchPage: Int = 1
 )

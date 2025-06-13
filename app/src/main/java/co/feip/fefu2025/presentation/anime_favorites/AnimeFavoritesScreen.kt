@@ -25,7 +25,7 @@ fun AnimeFavoritesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Понравившиеся аниме") },
+                title = { Text("Рекомендованные аниме") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -92,7 +92,7 @@ fun AnimeFavoritesScreen(
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            text = "У вас пока нет понравившихся аниме",
+                                            text = "Нет рекомендованных :(",
                                             style = MaterialTheme.typography.bodyLarge
                                         )
                                     }
@@ -104,6 +104,7 @@ fun AnimeFavoritesScreen(
                                         animePoster = anime,
                                         modifier = Modifier.fillMaxWidth(),
                                         navigateToDetails = { navigateToDetails(anime.id) },
+                                        imageUrl = anime.imageUrl ?: ""
                                     )
                                 }
                             }

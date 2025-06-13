@@ -3,7 +3,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class To(
-    val day: Int,
-    val month: Int,
-    val year: Int
+    val day: Int?,
+    val month: Int?,
+    val year: Int?
 )

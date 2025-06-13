@@ -1,4 +1,4 @@
-package co.feip.fefu2025.domain.use_case.get_similar
+package co.feip.fefu2025.domain.use_case
 
 import co.feip.fefu2025.common.Resource
 import co.feip.fefu2025.domain.model.AnimePoster

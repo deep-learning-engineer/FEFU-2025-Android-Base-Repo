@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Aired(
-    val from: String,
+    val from: String?,
     val prop: Prop,
-    val to: String
+    val to: String?
 )

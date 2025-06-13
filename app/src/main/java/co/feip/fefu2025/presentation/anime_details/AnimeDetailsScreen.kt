@@ -3,7 +3,6 @@ package co.feip.fefu2025.presentation.anime_details
 import android.graphics.drawable.GradientDrawable
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,13 +36,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import co.feip.fefu2025.SimpleAnimeCard
 import co.feip.fefu2025.presentation.anime_details.components.CustomFlexBox
 import co.feip.fefu2025.presentation.anime_details.components.RatingChart
+import coil3.compose.AsyncImage
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,40 +128,31 @@ fun AnimeDetailsScreen(
                             .fillMaxSize()
                             .verticalScroll(scrollState)
                     ) {
-                        val mainImageResourceId = if (!anime.drawableName.isNullOrBlank()) {
-                            context.resources.getIdentifier(
-                                anime.drawableName,
-                                "drawable",
-                                context.packageName
-                            )
-                        } else {
-                            0
-                        }
 
-                        if (mainImageResourceId != 0) {
-                            Image(
-                                painter = painterResource(id = mainImageResourceId),
+
+                        anime.imageUrl?.let { url ->
+                            AsyncImage(
+                                model = url,
                                 contentDescription = anime.title,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(300.dp),
                                 contentScale = ContentScale.Crop
                             )
-                        } else {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(300.dp)
-                                    .background(Color.Gray),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    "Постер недоступен",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = Color.White
-                                )
-                            }
+                        } ?: Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(300.dp)
+                                .background(Color.Gray),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "Постер недоступен",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Color.White
+                            )
                         }
+
 
                         Column(Modifier.padding(16.dp)) {
                             Text(
@@ -341,7 +331,7 @@ fun AnimeDetailsScreen(
                             Spacer(modifier = Modifier.height(24.dp))
                         }
 
-                        val recommendations = anime.recommendations
+                        val recommendations = state.recommendations
                         if (recommendations.isNotEmpty()) {
                             Column(Modifier.padding(horizontal = 16.dp)) {
                                 Text(
@@ -357,7 +347,8 @@ fun AnimeDetailsScreen(
                                     items(recommendations.take(10)) { recommendedAnime ->
                                         SimpleAnimeCard(
                                             animePoster = recommendedAnime,
-                                            navigateToDetails = { navigateToDetails(recommendedAnime.id) }
+                                            navigateToDetails = { navigateToDetails(recommendedAnime.id) },
+                                            imageUrl = recommendedAnime.imageUrl,
                                         )
                                     }
                                 }

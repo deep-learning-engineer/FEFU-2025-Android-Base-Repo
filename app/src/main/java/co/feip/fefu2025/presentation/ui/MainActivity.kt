@@ -58,7 +58,7 @@ fun Navigation(navController: NavHostController = rememberNavController()){
                 navigateToFavorites = { id -> navController.navigate(Destination.AnimeFavoritesScreen(id))},
                 navigateToSearch = { navController.navigate(Destination.AnimeSearchScreen) },
                 currentUserId = 1, // Пока заглушка
-                onRetry = { viewModel.loadAnimeList() }
+                onEvent = viewModel::onEvent
             )
         }
 
@@ -90,10 +90,9 @@ fun Navigation(navController: NavHostController = rememberNavController()){
 
             AnimeSearchScreen(
                 state = state,
-                onQueryChange = viewModel::filterPostersByQuery,
                 onBackClick = { navController.popBackStack() },
-                onRetry = { viewModel.loadAnimeList() },
-                navigateToDetails = { id -> navController.navigate(Destination.AnimeDetailsScreen(id)) }
+                navigateToDetails = { id -> navController.navigate(Destination.AnimeDetailsScreen(id)) },
+                onEvent = viewModel::onEvent
             )
         }
     }
