@@ -24,7 +24,7 @@ fun AnimeFavoritesScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
+            TopAppBar(  
                 title = { Text("Рекомендованные аниме") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {

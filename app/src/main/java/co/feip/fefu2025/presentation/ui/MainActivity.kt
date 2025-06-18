@@ -1,10 +1,12 @@
 package co.feip.fefu2025.presentation.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -20,19 +22,38 @@ import co.feip.fefu2025.presentation.anime_list.AnimeSearchScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
 
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val initialAnimeId = handleDeepLink(intent)
+
         setContent {
             MaterialTheme {
-                Navigation()
+                Navigation(initialAnimeId = initialAnimeId)
             }
         }
     }
+
+    private fun handleDeepLink(intent: Intent?): Int? {
+        if (intent?.action != Intent.ACTION_VIEW) return null
+
+        val data = intent.data ?: return null
+        val segments = data.pathSegments
+
+        if (data.host == "anime" && segments.size >= 1) {
+            return try {
+                segments[0].toInt()
+            } catch (e: NumberFormatException) {
+                null
+            }
+        }
+        return null
+    }
 }
-sealed class Destination{
+
+sealed class Destination {
     @Serializable
     object AnimeListScreen: Destination()
     @Serializable
@@ -44,12 +65,23 @@ sealed class Destination{
 }
 
 @Composable
-fun Navigation(navController: NavHostController = rememberNavController()){
+fun Navigation(
+    navController: NavHostController = rememberNavController(),
+    initialAnimeId: Int? = null
+) {
+    val startDestination = remember(initialAnimeId) {
+        if (initialAnimeId != null) {
+            Destination.AnimeDetailsScreen(initialAnimeId)
+        } else {
+            Destination.AnimeListScreen
+        }
+    }
+
     NavHost(
         navController = navController,
-        startDestination = Destination.AnimeListScreen
+        startDestination = startDestination
     ) {
-        composable<Destination.AnimeListScreen>{
+        composable<Destination.AnimeListScreen> {
             val viewModel: AnimeListViewModel = hiltViewModel()
             val state = viewModel.state.value
             AnimeListScreen(
@@ -57,7 +89,7 @@ fun Navigation(navController: NavHostController = rememberNavController()){
                 navigateToDetails = { id -> navController.navigate(Destination.AnimeDetailsScreen(id)) },
                 navigateToFavorites = { id -> navController.navigate(Destination.AnimeFavoritesScreen(id))},
                 navigateToSearch = { navController.navigate(Destination.AnimeSearchScreen) },
-                currentUserId = 1, // Пока заглушка
+                currentUserId = 1,
                 onEvent = viewModel::onEvent
             )
         }
