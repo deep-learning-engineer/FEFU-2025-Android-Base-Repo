@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.feip.fefu2025.domain.model.AnimePoster
+import coil3.compose.AsyncImage
 import java.util.Locale
 
 val SimpleAnimeCardHeight: Dp = 250.dp
@@ -28,48 +29,50 @@ val SimpleAnimeCardHeight: Dp = 250.dp
 fun SimpleAnimeCard(
     animePoster: AnimePoster,
     modifier: Modifier = Modifier,
-    navigateToDetails: (Int) -> Unit
+    navigateToDetails: (Int) -> Unit,
+    imageUrl: String? = null
 ) {
     val context = LocalContext.current
     val resources: Resources = context.resources
     val packageName: String = context.packageName
 
-    val resourceId = if (animePoster.drawableName != null && animePoster.drawableName.isNotBlank()) {
-        resources.getIdentifier(animePoster.drawableName, "drawable", packageName)
-    } else {
-        0
-    }
+    val resourceId =
+        if (animePoster.imageUrl != null && animePoster.imageUrl.isNotBlank()) {
+            resources.getIdentifier(animePoster.imageUrl, "drawable", packageName)
+        } else {
+            0
+        }
 
     Card(
         modifier = modifier
             .width(130.dp)
-            .height(SimpleAnimeCardHeight).clickable {
+            .height(SimpleAnimeCardHeight)
+            .clickable {
                 navigateToDetails(animePoster.id)
             }
     ) {
         Column(
             modifier = Modifier.fillMaxHeight()
         ) {
-            if (resourceId != 0) {
-                Image(
-                    painter = painterResource(id = resourceId),
+            imageUrl?.let {
+                AsyncImage(
+                    model = it,
                     contentDescription = animePoster.title,
                     modifier = Modifier
                         .height(150.dp)
                         .fillMaxWidth(),
                     contentScale = ContentScale.Crop
                 )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .height(150.dp)
-                        .fillMaxWidth()
-                        .background(Color.LightGray),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("?", style = MaterialTheme.typography.displaySmall, color = Color.DarkGray)
-                }
+            } ?: Box(
+                modifier = Modifier
+                    .height(150.dp)
+                    .fillMaxWidth()
+                    .background(Color.LightGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("?", style = MaterialTheme.typography.displaySmall, color = Color.DarkGray)
             }
+
 
             Box(
                 modifier = Modifier
